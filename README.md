@@ -61,6 +61,7 @@ Use `render(request, 'todo.html')` instead
 To make django point to templates directory for templates, add the path to the TEMPLATES section
 <br>`'DIRS': [os.path.join(BASE_DIR, 'templates')],`
 
+### Database connect
 Next step, we need to represent each todo item as an object in the database
 We should use OOP to create each object in Python, and this is handled by the models.py file
 
@@ -76,6 +77,7 @@ This creates a 0001_initial.py file that manages the migrations for the model co
 To initiate the connection, run
 <br>`python manage.py migrate`
 
+### Add items to database manually
 Next, let us start with manually adding items to the database (recall it is the default sqlite FB)
 To connect to the python shell, run:
 <br>`python manage.py shell`
@@ -103,19 +105,98 @@ from i in todoItem.objects.all():
 You can also use the get method to get the content of any item from its index
 <br>`todoItem.objects.get(id=1).content`
 
+### Display database items in browser
 To show these objects in the browser (i.e. connect the database items in the view.py):
 ```
-from .models import todoItem`
+from .models import todoItem
 
-def todoView(request):`
-    # This function shows not just the html template, but also interacts with the sqlite DB`
-    return render(request, 'todo.html', {'all_items': todoItem.objects.all()})`
+def todoView(request):
+    # This function shows not just the html template, but also interacts with the sqlite DB
+    return render(request, 'todo.html', {'all_items': todoItem.objects.all()})
 ```
 And in the todo.html, change the list item to the below
 ```
 <ul>
-<br>    {% for item in all_items %}
-<br>        <li>{{item.content}}</li>
-<br>    {% endfor %}
+    {% for item in all_items %}
+        <li>{{item.content}}</li>
+    {% endfor %}
 </ul>
+```
+
+### To add items from the browser
+Next, we add form block to the todo.html to add an item to the list in
+```
+<!- Let's add a form item-->
+<form action="/addTodo/" method="post">{% csrf_token %}
+    <input type="text" name="content"/>
+    <input type="submit" value="Add"/>
+</form>
+```
+Then the database action is defined in the views.py file as a todoAdd function:
+```
+def todoAdd(request):
+    # create a new todo item
+    new_item = todoItem(content = request.POST['content'])
+    # save
+    new_item.save()
+    # redirect the browser to /todo/
+    return HttpResponseRedirect('/todo/')
+```
+
+And we add the /addTodo/ path to connect to the todoAdd function in the urls.py
+```
+path('addTodo/', todoAdd),
+```
+Remember to add the function corresponding to the addTodo (i.e. todoAdd) as an import in the urls.py, i.e.
+```
+from todo.views import todoView, todoAdd
+```
+
+
+### Deleting items
+To delete an item, it will be helpful to add a delete button to each item in the list
+Let's change the display objects block to
+```
+<ul>
+    {% for item in all_items %}
+        <li>{{item.content}}</li>
+        <form action="deltodo/{{item.id}}" method="POST">
+            <input type="submit" value="Delete">
+        </form>
+    {% endfor %}
+</ul>
+```
+or more elegantly (so that the button is right beside each list item:
+```
+<ul>
+    {% for item in all_items %}
+        <li>{{item.content}}
+        <form   action="/deltodo/{{item.id}}/" 
+                method="post"
+                style="display: inline;">{% csrf_token %}
+            <input type="submit" value="Delete">
+        </form>
+        </li>
+    {% endfor %}
+</ul>
+```
+
+Then add the action /deltodo/{{item.id}} to urls.py as:
+```
+path('deltodo/<int:todo_id>/', todoDel),
+```
+and then in the import
+```
+from todo.views import todoView, todoAdd, todoDel
+```
+
+Next we create the todoDel function in the views.py that carries out the action in the database
+```
+def todoDel(request, todo_id):
+    # get todo Item
+    item_to_del = todoItem.objects.get(id=todo_id)
+    # delete
+    item_to_del.delete()
+    # save
+    return HttpResponseRedirect('/todo/')
 ```

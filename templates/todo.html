@@ -1,12 +1,43 @@
 <h1>This is the todo page</h1> 
 
-<!-- <ul>
+<!-- first old list
+<ul>
     <li>Temporary todo item 1</li>
     <li>Temporary todo item 2</li>
-</ul>-->
+</ul> -->
 
+<!-- second old list
 <ul>
     {% for item in all_items %}
         <li>{{item.content}}</li>
     {% endfor %}
+</ul>-->
+
+<!-- Let's make changes to the items so that that is a delete beside every item
+-->
+<ul>
+    {% for item in all_items %}
+        <li>{{item.content}}
+        <form   action="/deltodo/{{item.id}}/" 
+                method="post"
+                style="display: inline;">{% csrf_token %}
+            <input type="submit" value="Delete">
+        </form>
+        </li>
+    {% endfor %}
 </ul>
+
+
+
+<!-- Let's add a form item
+We will use the post method since we're posting to the database
+The csrf_token is a security feature
+name='content' matches the item.content in the previous block
+value='Add' is just text
+-->
+<form action="/addTodo/" method="post">{% csrf_token %}
+    <input type="text" name="content"/>
+    <input type="submit" value="Add"/>
+</form>
+
+
