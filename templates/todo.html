@@ -1,5 +1,12 @@
 <h1>This is the todo page</h1> 
-<ul>
+
+<!-- <ul>
     <li>Temporary todo item 1</li>
     <li>Temporary todo item 2</li>
+</ul>-->
+
+<ul>
+    {% for item in all_items %}
+        <li>{{item.content}}</li>
+    {% endfor %}
 </ul>
