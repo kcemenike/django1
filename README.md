@@ -57,3 +57,16 @@ Use `render(request, 'todo.html')` instead
 
 To make django point to templates directory for templates, add the path to the TEMPLATES section
 `'DIRS': [os.path.join(BASE_DIR, 'templates')],`
+
+Next step, we need to represent each todo item as an object in the database
+We should use OOP to create each object in Python, and this is handled by the models.py file
+
+Navigate to models.py and add:
+`class todoItem(models.Model):`
+`    content = models.TextField()`
+
+Next, make migrations from the model to the project by running from the command line:
+`python manage.py makemigrations`
+This creates a 0001_initial.py file that manages the migrations for the model connection to the database
+To initiate the connection, run
+`python manage.py migrate`
