@@ -102,8 +102,8 @@ To show these objects in the browser (i.e. connect the database items in the vie
 `    return render(request, 'todo.html', {'all_items': todoItem.objects.all()})`
 
 And in the todo.html, change the list item to the below
-`<ul>`
-`    {% for item in all_items %}`
-`        <li>{{item.content}}</li>`
-`    {% endfor %}`
-`</ul>`
+`<ul>
+    {% for item in all_items %}
+        <li>{{item.content}}</li>
+    {% endfor %}
+</ul>`
