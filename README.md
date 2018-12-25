@@ -70,3 +70,40 @@ Next, make migrations from the model to the project by running from the command 
 This creates a 0001_initial.py file that manages the migrations for the model connection to the database
 To initiate the connection, run
 `python manage.py migrate`
+
+Next, let us start with manually adding items to the database (recall it is the default sqlite FB)
+To connect to the python shell, run:
+`python manage.py shell`
+This should change the terminal to a Python (or iPython terminal)
+Let's add 3 items. Enter:
+`from todo.models import todoItem # This imports the todoItem function from the models.py`
+`a = todoItem(content='permanent todo Item A') # This adds a todoItem called a`
+`b = todoItem(content='permanent todo Item B')`
+`c = todoItem(content='permanent todo Item C')`
+`a.save() # This saves the todo Item a`
+`b.save()`
+`c.save()`
+
+To show the first todo Item, just run
+`todoItem.objects.all()[0].content`
+
+To show all items, run
+`from i in todoItem.objects.all():`
+`   print(i.content)`
+
+You can also use the get method to get the content of any item from its index
+`todoItem.objects.get(id=1).content`
+
+To show these objects in the browser (i.e. connect the database items in the view.py):
+`from .models import todoItem`
+
+`def todoView(request):`
+`    # This function shows not just the html template, but also interacts with the sqlite DB`
+`    return render(request, 'todo.html', {'all_items': todoItem.objects.all()})`
+
+And in the todo.html, change the list item to the below
+`<ul>`
+`    {% for item in all_items %}`
+`        <li>{{item.content}}</li>`
+`    {% endfor %}`
+`</ul>`
