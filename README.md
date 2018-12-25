@@ -25,6 +25,13 @@ This creates a subfolder in the project folder with a couple of items you can ed
 To connect the main project with this newly created app, you need to :
 #### 1
 include the INSTALLED_APPS section of the settings.py file
+`INSTALLED_APPS = [`
+`    .`
+`    .`
+`    .`    
+`    'django.contrib.staticfiles',`
+`    'hello', # recall that this is the app name, not the page name`
+`]`
 
 #### 2
 Include it in the view.py file
@@ -34,3 +41,19 @@ Create a function that displays 'hello world'
 `def myView(request):`
 `    return HttpResponse(" Hello World")`
 
+...
+# Let's create a ToDo app
+As usual, run `python manage.py startapp todo` to create the app
+A todo folder is created
+Add 'todo' to the INSTALLED_APPS section of settings.py of the project folder
+Add the todoView function to views.py in the app folder (remember to import HttpResponse from django.http)
+Then run `python manage.py runserver`
+This should show just text. But we need to show more than just that
+Here we need to create a template
+Create a templates folder and add the todo.htmlfile to it
+
+In the views.py, instead of having the HttpResponse('hello world') as the return statement of the text
+Use `render(request, 'todo.html')` instead
+
+To make django point to templates directory for templates, add the path to the TEMPLATES section
+`'DIRS': [os.path.join(BASE_DIR, 'templates')],`
